@@ -1,5 +1,10 @@
 import { getCurrentTabId, getDuplicatePlan, getTabLabel, getTitlePreview, getWindowGroups, matchesSearch } from "./lib/tab-utils.js";
 import { activateBrowserTab } from "./lib/chrome-actions.js";
+import { getMessage, localizeDocument } from "./lib/i18n.js";
+
+const t = (key, substitutions) => getMessage(chrome.i18n, key, substitutions);
+localizeDocument(document, chrome.i18n);
+document.title = t("extensionName");
 
 const elements = {
   tabSummary: document.querySelector("#tabSummary"),
@@ -104,15 +109,15 @@ function render() {
   const visibleTabs = getVisibleTabs();
   const duplicatePlan = getDuplicatePlan(state.tabs);
 
-  elements.tabSummary.textContent = `${state.tabs.length} 个标签页 · ${getWindowGroups(state.tabs).length} 个窗口`;
-  elements.resultCount.textContent = `${visibleTabs.length} 个结果`;
+  elements.tabSummary.textContent = t("tabSummary", [String(state.tabs.length), String(getWindowGroups(state.tabs).length)]);
+  elements.resultCount.textContent = t("resultCount", String(visibleTabs.length));
   elements.selectedCount.textContent = state.selected.size;
   elements.closeSelectedButton.disabled = state.selected.size === 0;
 
   elements.dedupeButton.disabled = duplicatePlan.removeIds.length === 0;
   elements.dedupeLabel.textContent = duplicatePlan.removeIds.length
-    ? `清理 ${duplicatePlan.removeIds.length} 个重复页`
-    : "没有重复页";
+    ? t("cleanDuplicateCount", String(duplicatePlan.removeIds.length))
+    : t("noDuplicates");
 
   const visibleSelected = visibleTabs.filter((tab) => state.selected.has(tab.id)).length;
   elements.selectAllCheckbox.checked = visibleTabs.length > 0 && visibleSelected === visibleTabs.length;
@@ -140,7 +145,7 @@ function render() {
     heading.type = "button";
     const isCollapsed = state.collapsedWindows.has(group.windowId);
     heading.setAttribute("aria-expanded", String(!isCollapsed));
-    heading.setAttribute("aria-label", `${isCollapsed ? "展开" : "收起"}窗口 ${groupIndex + 1}`);
+    heading.setAttribute("aria-label", t(isCollapsed ? "expandWindow" : "collapseWindow", String(groupIndex + 1)));
     const chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     chevron.setAttribute("viewBox", "0 0 24 24");
     chevron.setAttribute("aria-hidden", "true");
@@ -149,8 +154,8 @@ function render() {
     chevron.append(chevronPath);
     const title = document.createElement("h2");
     title.textContent = groups.length === 1
-      ? "当前标签页"
-      : group.windowId === state.currentWindowId ? "当前窗口" : `窗口 ${groupIndex + 1}`;
+      ? t("currentTabs")
+      : group.windowId === state.currentWindowId ? t("currentWindow") : t("windowIndex", String(groupIndex + 1));
     const count = document.createElement("span");
     count.textContent = group.tabs.length;
     heading.append(chevron, title, count);
@@ -179,12 +184,14 @@ function render() {
 }
 
 function createTabItem(tab) {
+  const tabTitle = tab.title || t("untitled");
+  const tabLabel = getTabLabel(tab, t("newTab"));
   const item = document.createElement("article");
   item.className = "tab-item";
   item.classList.toggle("is-selected", state.selected.has(tab.id));
   item.classList.toggle("is-active-tab", Boolean(tab.active));
   item.dataset.tabId = String(tab.id);
-  item.dataset.tooltip = tab.title || "无标题";
+  item.dataset.tooltip = tabTitle;
   item.addEventListener("click", (event) => {
     if (event.target.closest(".tab-check, .single-close")) return;
     activateTab(tab);
@@ -192,11 +199,11 @@ function createTabItem(tab) {
 
   const checkboxLabel = document.createElement("label");
   checkboxLabel.className = "tab-check";
-  checkboxLabel.title = "选择标签页";
+  checkboxLabel.title = t("selectTab");
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.checked = state.selected.has(tab.id);
-  checkbox.setAttribute("aria-label", `选择 ${tab.title || "无标题标签页"}`);
+  checkbox.setAttribute("aria-label", t("selectNamedTab", tabTitle));
   checkbox.addEventListener("change", () => {
     checkbox.checked ? state.selected.add(tab.id) : state.selected.delete(tab.id);
     render();
@@ -206,28 +213,28 @@ function createTabItem(tab) {
   const openButton = document.createElement("button");
   openButton.className = "tab-open";
   openButton.type = "button";
-  openButton.setAttribute("aria-label", `打开 ${tab.title || "无标题标签页"}`);
+  openButton.setAttribute("aria-label", t("openNamedTab", tabTitle));
 
   const favicon = createFavicon(tab);
   const text = document.createElement("span");
   text.className = "tab-text";
   const label = document.createElement("span");
   label.className = "tab-label";
-  label.textContent = getTabLabel(tab);
+  label.textContent = tabLabel;
   const title = document.createElement("span");
   title.className = "tab-title";
-  title.textContent = tab.title || "无标题";
+  title.textContent = tabTitle;
   const compactTitle = document.createElement("span");
   compactTitle.className = "tab-compact-title";
-  compactTitle.textContent = getTitlePreview(tab.title);
+  compactTitle.textContent = getTitlePreview(tab.title, 10, t("untitled"));
   text.append(label, title, compactTitle);
   openButton.append(favicon, text);
 
   const closeButton = document.createElement("button");
   closeButton.className = "single-close";
   closeButton.type = "button";
-  closeButton.title = "关闭标签页";
-  closeButton.setAttribute("aria-label", `关闭 ${tab.title || "无标题标签页"}`);
+  closeButton.title = t("closeTab");
+  closeButton.setAttribute("aria-label", t("closeNamedTab", tabTitle));
   closeButton.textContent = "×";
   closeButton.addEventListener("click", () => chrome.tabs.remove(tab.id));
 
@@ -249,7 +256,7 @@ async function activateTab(tab) {
   try {
     await activateBrowserTab(chrome, tab);
   } catch (error) {
-    showToast("无法切换到该标签页");
+    showToast(t("cannotSwitchTab"));
     console.error(error);
   }
 }
@@ -258,7 +265,7 @@ async function openShortcutSettings() {
   try {
     await chrome.tabs.create({ url: "chrome://extensions/shortcuts" });
   } catch (error) {
-    showToast("请打开 chrome://extensions/shortcuts");
+    showToast(t("shortcutPageHint"));
     console.error(error);
   }
 }
@@ -268,7 +275,7 @@ function createFavicon(tab) {
   wrapper.className = "favicon-wrap";
   const fallback = document.createElement("span");
   fallback.className = "favicon-fallback";
-  fallback.textContent = getTabLabel(tab).slice(0, 1).toLocaleUpperCase();
+  fallback.textContent = getTabLabel(tab, t("newTab")).slice(0, 1).toLocaleUpperCase();
   wrapper.append(fallback);
 
   if (tab.favIconUrl) {
@@ -290,10 +297,10 @@ async function closeSelectedTabs() {
   try {
     await chrome.tabs.remove(ids);
     state.selected.clear();
-    showToast(`已关闭 ${ids.length} 个标签页`);
+    showToast(t("closedTabCount", String(ids.length)));
     await refreshTabs();
   } catch (error) {
-    showToast("部分标签页未能关闭");
+    showToast(t("partialCloseFailure"));
     console.error(error);
     await refreshTabs();
   }
@@ -305,10 +312,10 @@ async function removeDuplicates() {
   elements.dedupeButton.disabled = true;
   try {
     await chrome.tabs.remove(plan.removeIds);
-    showToast(`已清理 ${plan.removeIds.length} 个重复标签页`);
+    showToast(t("cleanedDuplicateCount", String(plan.removeIds.length)));
     await refreshTabs();
   } catch (error) {
-    showToast("部分重复标签页未能清理");
+    showToast(t("partialDedupeFailure"));
     console.error(error);
     await refreshTabs();
   }
@@ -322,7 +329,7 @@ function showToast(message) {
 }
 
 init().catch((error) => {
-  elements.tabSummary.textContent = "无法读取标签页";
-  showToast("扩展初始化失败");
+  elements.tabSummary.textContent = t("cannotReadTabs");
+  showToast(t("initializationFailed"));
   console.error(error);
 });

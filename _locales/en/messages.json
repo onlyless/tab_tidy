@@ -1,0 +1,82 @@
+{
+  "extensionName": { "message": "Tab Tidy" },
+  "extensionDescription": { "message": "Find, deduplicate, organize, and close Chrome tabs quickly." },
+  "actionTitle": { "message": "Open Tab Tidy" },
+  "commandPreviousTab": { "message": "Switch to the previously used tab" },
+  "loadingTabs": { "message": "Loading tabs…" },
+  "shortcutSettings": { "message": "Shortcuts" },
+  "configureShortcuts": { "message": "Configure shortcuts" },
+  "checkDuplicates": { "message": "Check duplicates" },
+  "tabTools": { "message": "Tab tools" },
+  "searchPlaceholder": { "message": "Search titles or URLs" },
+  "switchView": { "message": "Switch view" },
+  "defaultView": { "message": "Default" },
+  "defaultViewTitle": { "message": "Default view" },
+  "iconsOnlyView": { "message": "Icons only" },
+  "iconsOnlyViewTitle": { "message": "Tab icons only" },
+  "detailView": { "message": "Icon + title" },
+  "detailViewTitle": { "message": "Tab icon and title" },
+  "bulkActions": { "message": "Bulk actions" },
+  "selectAllResults": { "message": "Select all results" },
+  "closeSelected": { "message": "Close selected" },
+  "allTabs": { "message": "All tabs" },
+  "noMatches": { "message": "No matching tabs" },
+  "tryAnotherSearch": { "message": "Try another search." },
+  "tabSummary": {
+    "message": "$TAB_COUNT$ tabs · $WINDOW_COUNT$ windows",
+    "placeholders": { "tab_count": { "content": "$1" }, "window_count": { "content": "$2" } }
+  },
+  "resultCount": {
+    "message": "$COUNT$ results",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "cleanDuplicateCount": {
+    "message": "Clean $COUNT$ duplicates",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "noDuplicates": { "message": "No duplicates" },
+  "expandWindow": {
+    "message": "Expand window $INDEX$",
+    "placeholders": { "index": { "content": "$1" } }
+  },
+  "collapseWindow": {
+    "message": "Collapse window $INDEX$",
+    "placeholders": { "index": { "content": "$1" } }
+  },
+  "currentTabs": { "message": "Current tabs" },
+  "currentWindow": { "message": "Current window" },
+  "windowIndex": {
+    "message": "Window $INDEX$",
+    "placeholders": { "index": { "content": "$1" } }
+  },
+  "untitled": { "message": "Untitled" },
+  "newTab": { "message": "New tab" },
+  "selectTab": { "message": "Select tab" },
+  "selectNamedTab": {
+    "message": "Select $TITLE$",
+    "placeholders": { "title": { "content": "$1" } }
+  },
+  "openNamedTab": {
+    "message": "Open $TITLE$",
+    "placeholders": { "title": { "content": "$1" } }
+  },
+  "closeTab": { "message": "Close tab" },
+  "closeNamedTab": {
+    "message": "Close $TITLE$",
+    "placeholders": { "title": { "content": "$1" } }
+  },
+  "cannotSwitchTab": { "message": "Could not switch to this tab" },
+  "shortcutPageHint": { "message": "Open chrome://extensions/shortcuts" },
+  "closedTabCount": {
+    "message": "Closed $COUNT$ tabs",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "partialCloseFailure": { "message": "Some tabs could not be closed" },
+  "cleanedDuplicateCount": {
+    "message": "Cleaned $COUNT$ duplicate tabs",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "partialDedupeFailure": { "message": "Some duplicate tabs could not be cleaned" },
+  "cannotReadTabs": { "message": "Could not read tabs" },
+  "initializationFailed": { "message": "Extension initialization failed" }
+}

@@ -1,2 +1,4 @@
-outputs/
 .DS_Store
+node_modules/
+outputs/
+work/

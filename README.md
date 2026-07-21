@@ -1,35 +1,45 @@
 # Tab Tidy
 
-一个零构建依赖的 Chrome Manifest V3 标签页管理扩展。
+**English** | [简体中文](README.zh-CN.md)
 
-## 功能
+A zero-build Chrome Manifest V3 extension for finding, organizing, deduplicating, and closing tabs.
 
-- 按规范化后的页面标题识别重复标签页，一键清理；优先保留当前活动页，其次是固定页，再其次是最近访问页。
-- 展示所有 Chrome 窗口中的标签页，支持三种视图：“默认”显示图标和标题前 10 个字符；“仅标签”使用高密度 favicon 网格，悬停显示完整标题；“标签 + 标题”展示详细信息。
-- 按标题或网址实时搜索。
-- 选择单个、全选搜索结果，并批量关闭。
-- 点击整张标签卡片可切换到对应窗口和标签页；视图偏好会被保留。
-- 每个浏览器窗口都可以独立折叠和展开。
-- 打开插件时自动滚动到当前窗口的活动标签，并短暂高亮定位。
-- 支持快捷键打开插件，以及切换到当前窗口中上一个使用的标签页；连续触发可在最近两个标签之间快速往返。
+## Features
 
-## 快捷键
+- Detect duplicate tabs by normalized page title and clean them in one click. The active tab is kept first, followed by pinned tabs and then the most recently accessed tab.
+- Browse tabs across every Chrome window using three views:
+  - **Default:** favicon plus the first 10 title characters.
+  - **Icons only:** a high-density favicon grid with full titles on hover.
+  - **Icon + title:** a detailed list.
+- Search titles and URLs instantly.
+- Select individual tabs or all search results, then close them in bulk.
+- Click any tab card to focus its Chrome window and activate the tab.
+- Collapse and expand each browser window independently.
+- Automatically locate and briefly highlight the active tab when the popup opens.
+- Use keyboard shortcuts to open the extension or switch to the previously used tab. Repeating the latter toggles quickly between the two most recent tabs.
+- Automatically follows the Chrome UI language in English and Simplified Chinese.
 
-点击插件顶部的“快捷键”按钮，会打开 Chrome 原生快捷键管理页。可分别配置“激活此扩展”和“切换到上一个使用的标签页”；Chrome 不允许扩展直接修改用户快捷键，因此配置由该原生页面完成。
+## Keyboard shortcuts
 
-## 安装
+Click **Shortcuts** in the extension to open Chrome's native shortcut settings. You can configure both **Activate the extension** and **Switch to the previously used tab**. Chrome does not allow extensions to assign user shortcuts directly.
 
-1. 在 Chrome 地址栏打开 `chrome://extensions`。
-2. 打开右上角“开发者模式”。
-3. 点击“加载已解压的扩展程序”。
-4. 选择本项目目录。
+## Install from source
 
-## 测试
+1. Open `chrome://extensions` in Chrome.
+2. Enable **Developer mode**.
+3. Click **Load unpacked**.
+4. Select this repository's directory.
+
+## Test
 
 ```bash
 npm test
 ```
 
-## 去重规则
+## Deduplication rules
 
-标题会先进行 Unicode 宽度归一化、合并多余空白并忽略大小写。空标题不会参与去重。相同标题即视为重复，不要求 URL 相同。
+Titles are Unicode-normalized, whitespace is collapsed, and letter case is ignored. Empty titles are skipped. Tabs with the same normalized title are considered duplicates even when their URLs differ.
+
+## Privacy
+
+Tab Tidy processes tab metadata locally in Chrome. It does not send browsing data to an external service.

@@ -41,7 +41,8 @@ test("search matches both title and URL without case sensitivity", () => {
 test("tab labels use hostname and handle internal pages", () => {
   assert.equal(getTabLabel({ url: "https://www.example.com/path" }), "example.com");
   assert.equal(getTabLabel({ url: "chrome://settings/" }), "chrome");
-  assert.equal(getTabLabel({ url: "not-a-url" }), "新标签页");
+  assert.equal(getTabLabel({ url: "not-a-url" }), "New tab");
+  assert.equal(getTabLabel({ url: "not-a-url" }, "新标签页"), "新标签页");
 });
 
 test("title preview keeps the first characters without splitting emoji", () => {

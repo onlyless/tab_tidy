@@ -1,0 +1,82 @@
+{
+  "extensionName": { "message": "Tab Tidy" },
+  "extensionDescription": { "message": "快速查找、去重、整理和关闭 Chrome 标签页。" },
+  "actionTitle": { "message": "打开 Tab Tidy" },
+  "commandPreviousTab": { "message": "切换到上一个使用的标签页" },
+  "loadingTabs": { "message": "正在读取标签页…" },
+  "shortcutSettings": { "message": "快捷键" },
+  "configureShortcuts": { "message": "配置快捷键" },
+  "checkDuplicates": { "message": "检查重复页" },
+  "tabTools": { "message": "标签页工具" },
+  "searchPlaceholder": { "message": "搜索标题或网址" },
+  "switchView": { "message": "切换视图" },
+  "defaultView": { "message": "默认" },
+  "defaultViewTitle": { "message": "默认视图" },
+  "iconsOnlyView": { "message": "仅标签" },
+  "iconsOnlyViewTitle": { "message": "仅显示标签图标" },
+  "detailView": { "message": "标签 + 标题" },
+  "detailViewTitle": { "message": "标签图标和标题" },
+  "bulkActions": { "message": "批量操作" },
+  "selectAllResults": { "message": "全选结果" },
+  "closeSelected": { "message": "关闭所选" },
+  "allTabs": { "message": "所有标签页" },
+  "noMatches": { "message": "没有匹配的标签页" },
+  "tryAnotherSearch": { "message": "换个关键词试试。" },
+  "tabSummary": {
+    "message": "$TAB_COUNT$ 个标签页 · $WINDOW_COUNT$ 个窗口",
+    "placeholders": { "tab_count": { "content": "$1" }, "window_count": { "content": "$2" } }
+  },
+  "resultCount": {
+    "message": "$COUNT$ 个结果",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "cleanDuplicateCount": {
+    "message": "清理 $COUNT$ 个重复页",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "noDuplicates": { "message": "没有重复页" },
+  "expandWindow": {
+    "message": "展开窗口 $INDEX$",
+    "placeholders": { "index": { "content": "$1" } }
+  },
+  "collapseWindow": {
+    "message": "收起窗口 $INDEX$",
+    "placeholders": { "index": { "content": "$1" } }
+  },
+  "currentTabs": { "message": "当前标签页" },
+  "currentWindow": { "message": "当前窗口" },
+  "windowIndex": {
+    "message": "窗口 $INDEX$",
+    "placeholders": { "index": { "content": "$1" } }
+  },
+  "untitled": { "message": "无标题" },
+  "newTab": { "message": "新标签页" },
+  "selectTab": { "message": "选择标签页" },
+  "selectNamedTab": {
+    "message": "选择 $TITLE$",
+    "placeholders": { "title": { "content": "$1" } }
+  },
+  "openNamedTab": {
+    "message": "打开 $TITLE$",
+    "placeholders": { "title": { "content": "$1" } }
+  },
+  "closeTab": { "message": "关闭标签页" },
+  "closeNamedTab": {
+    "message": "关闭 $TITLE$",
+    "placeholders": { "title": { "content": "$1" } }
+  },
+  "cannotSwitchTab": { "message": "无法切换到该标签页" },
+  "shortcutPageHint": { "message": "请打开 chrome://extensions/shortcuts" },
+  "closedTabCount": {
+    "message": "已关闭 $COUNT$ 个标签页",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "partialCloseFailure": { "message": "部分标签页未能关闭" },
+  "cleanedDuplicateCount": {
+    "message": "已清理 $COUNT$ 个重复标签页",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "partialDedupeFailure": { "message": "部分重复标签页未能清理" },
+  "cannotReadTabs": { "message": "无法读取标签页" },
+  "initializationFailed": { "message": "扩展初始化失败" }
+}
