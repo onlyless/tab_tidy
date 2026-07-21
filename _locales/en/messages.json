@@ -60,12 +60,21 @@
     "message": "Open $TITLE$",
     "placeholders": { "title": { "content": "$1" } }
   },
+  "dragNamedTab": {
+    "message": "Drag $TITLE$ to another window",
+    "placeholders": { "title": { "content": "$1" } }
+  },
   "closeTab": { "message": "Close tab" },
   "closeNamedTab": {
     "message": "Close $TITLE$",
     "placeholders": { "title": { "content": "$1" } }
   },
   "cannotSwitchTab": { "message": "Could not switch to this tab" },
+  "movedTabToWindow": {
+    "message": "Moved tab to window $INDEX$",
+    "placeholders": { "index": { "content": "$1" } }
+  },
+  "moveTabFailed": { "message": "Could not move this tab" },
   "shortcutPageHint": { "message": "Open chrome://extensions/shortcuts" },
   "closedTabCount": {
     "message": "Closed $COUNT$ tabs",

@@ -173,6 +173,8 @@ button { color: inherit; }
 .danger-button span { min-width: 18px; padding: 2px 5px; border-radius: 999px; color: #fff; background: var(--danger); font-size: 10px; }
 
 .tab-list { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 16px 24px 24px; scrollbar-width: thin; scrollbar-color: #c3cac6 transparent; }
+.window-group { border-radius: 12px; transition: background 120ms ease, outline-color 120ms ease; }
+.window-group.is-drop-target { outline: 2px dashed #67a88f; outline-offset: 6px; background: rgba(225, 241, 233, 0.7); }
 .window-group + .window-group { margin-top: 22px; }
 .window-heading { display: flex; align-items: center; gap: 7px; width: 100%; margin: 0 0 9px; border: 0; padding: 3px 0; text-align: left; background: transparent; cursor: pointer; }
 .window-heading svg { width: 15px; height: 15px; fill: none; stroke: #7b8581; stroke-width: 2; transition: transform 140ms ease; }
@@ -203,6 +205,8 @@ button { color: inherit; }
   cursor: pointer;
 }
 .tab-item:hover { border-color: #bec9c4; box-shadow: 0 6px 16px rgba(20, 42, 34, 0.08); transform: translateY(-1px); }
+.tab-item[draggable="true"] { cursor: grab; }
+.tab-item.is-dragging { opacity: 0.42; cursor: grabbing; transform: scale(0.97); }
 .tab-item.is-selected { border-color: #67a88f; box-shadow: 0 0 0 2px rgba(18, 100, 75, 0.09); }
 .tab-item.is-located { animation: locate-pulse 1.2s ease-out; }
 .tab-item.is-active-tab::before { content: ""; position: absolute; left: -1px; top: 12px; bottom: 12px; width: 3px; border-radius: 0 2px 2px 0; background: var(--accent); }

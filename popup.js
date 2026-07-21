@@ -1,5 +1,5 @@
 import { getCurrentTabId, getDuplicatePlan, getTabLabel, getTitlePreview, getWindowGroups, matchesSearch } from "./lib/tab-utils.js";
-import { activateBrowserTab } from "./lib/chrome-actions.js";
+import { activateBrowserTab, moveBrowserTab } from "./lib/chrome-actions.js";
 import { getMessage, localizeDocument } from "./lib/i18n.js";
 
 const t = (key, substitutions) => getMessage(chrome.i18n, key, substitutions);
@@ -30,7 +30,9 @@ const state = {
   collapsedWindows: new Set(),
   currentWindowId: null,
   shouldAutoLocate: true,
-  toastTimer: null
+  toastTimer: null,
+  draggedTabId: null,
+  suppressTabClick: false
 };
 
 async function init() {
@@ -139,6 +141,12 @@ function render() {
   groups.forEach((group, groupIndex) => {
     const section = document.createElement("section");
     section.className = "window-group";
+    section.dataset.windowId = String(group.windowId);
+    section.addEventListener("dragover", (event) => handleWindowDragOver(event, section, group.windowId));
+    section.addEventListener("dragleave", (event) => {
+      if (!section.contains(event.relatedTarget)) section.classList.remove("is-drop-target");
+    });
+    section.addEventListener("drop", (event) => moveDraggedTab(event, section, group.windowId, groupIndex));
 
     const heading = document.createElement("button");
     heading.className = "window-heading";
@@ -192,7 +200,12 @@ function createTabItem(tab) {
   item.classList.toggle("is-active-tab", Boolean(tab.active));
   item.dataset.tabId = String(tab.id);
   item.dataset.tooltip = tabTitle;
+  item.draggable = true;
+  item.setAttribute("aria-label", t("dragNamedTab", tabTitle));
+  item.addEventListener("dragstart", (event) => startTabDrag(event, item, tab));
+  item.addEventListener("dragend", () => endTabDrag(item));
   item.addEventListener("click", (event) => {
+    if (state.suppressTabClick) return;
     if (event.target.closest(".tab-check, .single-close")) return;
     activateTab(tab);
   });
@@ -240,6 +253,51 @@ function createTabItem(tab) {
 
   item.append(checkboxLabel, openButton, closeButton);
   return item;
+}
+
+function startTabDrag(event, item, tab) {
+  state.draggedTabId = tab.id;
+  state.suppressTabClick = true;
+  item.classList.add("is-dragging");
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", String(tab.id));
+}
+
+function endTabDrag(item) {
+  item.classList.remove("is-dragging");
+  clearDropTargets();
+  state.draggedTabId = null;
+  setTimeout(() => { state.suppressTabClick = false; }, 0);
+}
+
+function handleWindowDragOver(event, section, targetWindowId) {
+  const draggedTab = state.tabs.find((tab) => tab.id === state.draggedTabId);
+  if (!draggedTab || draggedTab.windowId === targetWindowId) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+  section.classList.add("is-drop-target");
+}
+
+async function moveDraggedTab(event, section, targetWindowId, groupIndex) {
+  event.preventDefault();
+  section.classList.remove("is-drop-target");
+  const draggedTab = state.tabs.find((tab) => tab.id === state.draggedTabId);
+  if (!draggedTab || draggedTab.windowId === targetWindowId) return;
+
+  try {
+    await moveBrowserTab(chrome, draggedTab.id, targetWindowId);
+    showToast(t("movedTabToWindow", String(groupIndex + 1)));
+    await refreshTabs();
+  } catch (error) {
+    showToast(t("moveTabFailed"));
+    console.error(error);
+  }
+}
+
+function clearDropTargets() {
+  elements.tabList.querySelectorAll(".is-drop-target").forEach((element) => {
+    element.classList.remove("is-drop-target");
+  });
 }
 
 function locateCurrentTab() {

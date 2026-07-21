@@ -60,12 +60,21 @@
     "message": "打开 $TITLE$",
     "placeholders": { "title": { "content": "$1" } }
   },
+  "dragNamedTab": {
+    "message": "将 $TITLE$ 拖动到其他窗口",
+    "placeholders": { "title": { "content": "$1" } }
+  },
   "closeTab": { "message": "关闭标签页" },
   "closeNamedTab": {
     "message": "关闭 $TITLE$",
     "placeholders": { "title": { "content": "$1" } }
   },
   "cannotSwitchTab": { "message": "无法切换到该标签页" },
+  "movedTabToWindow": {
+    "message": "已将标签页移动到窗口 $INDEX$",
+    "placeholders": { "index": { "content": "$1" } }
+  },
+  "moveTabFailed": { "message": "无法移动该标签页" },
   "shortcutPageHint": { "message": "请打开 chrome://extensions/shortcuts" },
   "closedTabCount": {
     "message": "已关闭 $COUNT$ 个标签页",
