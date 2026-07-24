@@ -17,6 +17,7 @@ A zero-build Chrome Manifest V3 extension for finding, organizing, deduplicating
 - Drag a tab card onto another window section to move it there, including collapsed window sections.
 - Collapse and expand each browser window independently.
 - Automatically locate and briefly highlight the active tab when the popup opens.
+- Automatically focus the search field when the popup opens, so typing can begin immediately after using the shortcut.
 - Use keyboard shortcuts to open the extension or switch to the previously used tab. Repeating the latter toggles quickly between the two most recent tabs.
 - Automatically follows the Chrome UI language in English and Simplified Chinese.
 

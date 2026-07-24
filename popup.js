@@ -44,6 +44,7 @@ async function init() {
   state.view = ["compact", "icon", "detail"].includes(saved.viewMode) ? saved.viewMode : "compact";
   state.currentWindowId = currentWindow?.id ?? null;
   await refreshTabs();
+  elements.searchInput.focus({ preventScroll: true });
 }
 
 function bindEvents() {

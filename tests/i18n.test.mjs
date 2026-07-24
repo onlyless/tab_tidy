@@ -38,6 +38,11 @@ test("getMessage returns localized text and a visible fallback", () => {
   assert.equal(getMessage(api, "missing"), "missing");
 });
 
+test("search input is focused automatically when the popup opens", async () => {
+  const html = await readText("popup.html");
+  assert.match(html, /<input[^>]+id="searchInput"[^>]+autofocus/);
+});
+
 async function readText(path) {
   return readFile(new URL(path, root), "utf8");
 }
