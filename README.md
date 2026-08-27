@@ -6,7 +6,7 @@ A zero-build Chrome Manifest V3 extension for finding, organizing, deduplicating
 
 ## Features
 
-- Detect duplicate tabs by normalized page title and clean them in one click. The most recently accessed duplicate is retained; inactive older copies are closed first. Active and pinned states only break access-time ties.
+- Detect duplicate tabs by normalized page URL or title and clean them in one click. The most recently accessed duplicate is retained; inactive older copies are closed first. Active and pinned states only break access-time ties.
 - Browse tabs across every Chrome window using three views:
   - **Default:** favicon plus the first 10 title characters.
   - **Icons only:** a high-density favicon grid with full titles on hover.
@@ -40,7 +40,7 @@ npm test
 
 ## Deduplication rules
 
-Titles are Unicode-normalized, whitespace is collapsed, and letter case is ignored. Empty titles are skipped. Tabs with the same normalized title are considered duplicates even when their URLs differ.
+Exact page URLs are matched first (URL fragments are ignored), which also detects Edge tabs whose dynamic titles differ. Titles are then Unicode-normalized, whitespace is collapsed, and letter case is ignored. Tabs with the same normalized title are still considered duplicates even when their URLs differ.
 
 Chrome does not expose a tab creation timestamp to extensions, so Tab Tidy uses Chrome's `lastAccessed` value as the reliable definition of “most recent.”
 

@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { activateBrowserTab, moveBrowserTab } from "../lib/chrome-actions.js";
-import { getCurrentTabId, getDuplicatePlan, getPreviousActiveTabId, getTabLabel, getTitlePreview, matchesSearch, normalizeTitle } from "../lib/tab-utils.js";
+import { getCurrentTabId, getDuplicatePlan, getPreviousActiveTabId, getTabLabel, getTitlePreview, matchesSearch, normalizeTitle, normalizeUrl } from "../lib/tab-utils.js";
 
 test("normalizeTitle handles whitespace, width, and case", () => {
   assert.equal(normalizeTitle("  Ｔｅｓｔ   Page  "), "test page");
+});
+
+test("normalizeUrl treats fragment variants as the same page", () => {
+  assert.equal(normalizeUrl("https://EXAMPLE.com/docs#intro"), "https://example.com/docs");
+  assert.equal(normalizeUrl("not a URL"), "");
 });
 
 test("duplicate plan keeps the most recently accessed tab", () => {
@@ -34,6 +39,24 @@ test("duplicate plan uses active and pinned states only to break access-time tie
   ]);
   assert.deepEqual(plan.keepIds, [8]);
   assert.deepEqual(plan.removeIds, [7]);
+});
+
+test("duplicate plan detects the same Edge page when dynamic titles differ", () => {
+  const plan = getDuplicatePlan([
+    { id: 9, title: "(2) Inbox", url: "https://mail.example.com/inbox", lastAccessed: 100 },
+    { id: 10, title: "Inbox", url: "https://mail.example.com/inbox#latest", lastAccessed: 300 }
+  ]);
+  assert.deepEqual(plan.keepIds, [10]);
+  assert.deepEqual(plan.removeIds, [9]);
+});
+
+test("duplicate plan still detects matching titles across different URLs", () => {
+  const plan = getDuplicatePlan([
+    { id: 11, title: "Documentation", url: "https://a.example/docs", lastAccessed: 200 },
+    { id: 12, title: " documentation ", url: "https://b.example/docs", lastAccessed: 100 }
+  ]);
+  assert.deepEqual(plan.keepIds, [11]);
+  assert.deepEqual(plan.removeIds, [12]);
 });
 
 test("blank titles do not count as duplicates", () => {
