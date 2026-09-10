@@ -240,7 +240,7 @@ function createTabItem(tab) {
   title.textContent = tabTitle;
   const compactTitle = document.createElement("span");
   compactTitle.className = "tab-compact-title";
-  compactTitle.textContent = getTitlePreview(tab.title, 10, t("untitled"));
+  compactTitle.textContent = getTitlePreview(tab.title, Infinity, t("untitled"));
   text.append(label, title, compactTitle);
   openButton.append(favicon, text);
 

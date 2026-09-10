@@ -8,7 +8,7 @@ A zero-build Chrome Manifest V3 extension for finding, organizing, deduplicating
 
 - Detect duplicate tabs by normalized page URL or title and clean them in one click. The most recently accessed duplicate is retained; inactive older copies are closed first. Active and pinned states only break access-time ties.
 - Browse tabs across every Chrome window using three views:
-  - **Default:** favicon plus the first 10 title characters.
+  - **Default:** favicon plus the title, truncated to the available card width.
   - **Icons only:** a high-density favicon grid with full titles on hover.
   - **Icon + title:** a detailed list.
 - Search titles and URLs instantly.

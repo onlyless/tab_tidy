@@ -81,6 +81,9 @@ test("title preview keeps the first characters without splitting emoji", () => {
   assert.equal(getTitlePreview("产品路线图 · Notion"), "产品路线图 · No…");
   assert.equal(getTitlePreview("😀标签页", 2), "😀标…");
   assert.equal(getTitlePreview("短标题"), "短标题");
+  assert.equal(getTitlePreview("\u2063".repeat(20) + "物流监控需求", Infinity), "物流监控需求");
+  assert.equal(getTitlePreview("👩‍💻开发文档", Infinity), "👩‍💻开发文档");
+  assert.equal(getTitlePreview("这是一个超过十个字符的完整标题", Infinity), "这是一个超过十个字符的完整标题");
   assert.equal(getTitlePreview(" \u200B\u200E\uFEFF          【物流监控】隔日达/三日达"), "【物流监控】隔日达/…");
   assert.equal(getTitlePreview("\u200B   "), "Untitled");
 });
