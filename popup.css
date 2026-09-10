@@ -220,7 +220,7 @@ button { color: inherit; }
 .favicon-wrap { position: relative; flex: 0 0 auto; display: grid; place-items: center; width: 28px; height: 28px; overflow: hidden; border-radius: 8px; background: #edf1ee; }
 .favicon { position: absolute; width: 18px; height: 18px; object-fit: contain; }
 .favicon-fallback { color: var(--accent); font-size: 12px; font-weight: 750; }
-.tab-text { display: flex; flex-direction: column; min-width: 0; gap: 3px; }
+.tab-text { display: flex; flex: 1; flex-direction: column; min-width: 0; gap: 3px; }
 .tab-label, .tab-title, .tab-compact-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tab-label { color: var(--accent); font-size: 11px; font-weight: 750; }
 .tab-title { color: var(--ink); font-size: 13px; font-weight: 530; }

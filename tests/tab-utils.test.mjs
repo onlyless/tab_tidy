@@ -81,6 +81,8 @@ test("title preview keeps the first characters without splitting emoji", () => {
   assert.equal(getTitlePreview("产品路线图 · Notion"), "产品路线图 · No…");
   assert.equal(getTitlePreview("😀标签页", 2), "😀标…");
   assert.equal(getTitlePreview("短标题"), "短标题");
+  assert.equal(getTitlePreview(" \u200B\u200E\uFEFF          【物流监控】隔日达/三日达"), "【物流监控】隔日达/…");
+  assert.equal(getTitlePreview("\u200B   "), "Untitled");
 });
 
 test("previous active tab follows usage history rather than visual order", () => {
