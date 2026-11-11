@@ -45,6 +45,8 @@
   },
   "currentTabs": { "message": "当前标签页" },
   "unnamedTabGroup": { "message": "未命名标签组" },
+  "closeTabGroup": { "message": "关闭「$TITLE$」中的所有标签页", "placeholders": { "title": { "content": "$1" } } },
+  "confirmCloseGroup": { "message": "关闭「$TITLE$」中的全部 $COUNT$ 个标签页？这也包含被搜索条件隐藏的标签页。", "placeholders": { "title": { "content": "$1" }, "count": { "content": "$2" } } },
   "expandTabGroup": {
     "message": "展开标签组 $TITLE$",
     "placeholders": { "title": { "content": "$1" } }

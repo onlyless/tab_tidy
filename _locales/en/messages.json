@@ -45,6 +45,8 @@
   },
   "currentTabs": { "message": "Current tabs" },
   "unnamedTabGroup": { "message": "Unnamed group" },
+  "closeTabGroup": { "message": "Close all tabs in $TITLE$", "placeholders": { "title": { "content": "$1" } } },
+  "confirmCloseGroup": { "message": "Close all $COUNT$ tabs in “$TITLE$”? This includes tabs hidden by the search filter.", "placeholders": { "title": { "content": "$1" }, "count": { "content": "$2" } } },
   "expandTabGroup": {
     "message": "Expand tab group $TITLE$",
     "placeholders": { "title": { "content": "$1" } }

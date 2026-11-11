@@ -341,7 +341,32 @@ function createTabGroupSection(sectionData, tabGroup) {
   content.hidden = collapsed;
   if (!collapsed) tabs.forEach((tab) => content.append(createTabItem(tab)));
   section.classList.toggle("is-collapsed", collapsed);
-  section.append(heading, content);
+  const header = document.createElement("div");
+  header.className = "tab-group-header";
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.className = "group-close";
+  closeButton.textContent = "×";
+  closeButton.title = t("closeTabGroup", title);
+  closeButton.setAttribute("aria-label", closeButton.title);
+  closeButton.addEventListener("click", async () => {
+    closeButton.disabled = true;
+    try {
+      const members = await chrome.tabs.query({ groupId });
+      if (!members.length) return;
+      if (!window.confirm(t("confirmCloseGroup", [title, String(members.length)]))) return;
+      await chrome.tabs.remove(members.map((tab) => tab.id));
+      showToast(t("closedTabCount", String(members.length)));
+    } catch (error) {
+      showToast(t("partialCloseFailure"));
+      console.error(error);
+    } finally {
+      closeButton.disabled = false;
+      await refreshTabs();
+    }
+  });
+  header.append(heading, closeButton);
+  section.append(header, content);
   return section;
 }
 
