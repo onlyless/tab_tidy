@@ -1,6 +1,6 @@
 {
   "extensionName": { "message": "Tab Tidy" },
-  "extensionDescription": { "message": "快速查找、去重、整理和关闭 Chrome 标签页。" },
+  "extensionDescription": { "message": "快速查找、去重、整理和关闭 Chrome 或 Edge 标签页。" },
   "actionTitle": { "message": "打开 Tab Tidy" },
   "commandPreviousTab": { "message": "切换到上一个使用的标签页" },
   "loadingTabs": { "message": "正在读取标签页…" },
@@ -44,6 +44,15 @@
     "placeholders": { "index": { "content": "$1" } }
   },
   "currentTabs": { "message": "当前标签页" },
+  "unnamedTabGroup": { "message": "未命名标签组" },
+  "expandTabGroup": {
+    "message": "展开标签组 $TITLE$",
+    "placeholders": { "title": { "content": "$1" } }
+  },
+  "collapseTabGroup": {
+    "message": "收起标签组 $TITLE$",
+    "placeholders": { "title": { "content": "$1" } }
+  },
   "currentWindow": { "message": "当前窗口" },
   "windowIndex": {
     "message": "窗口 $INDEX$",

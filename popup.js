@@ -24,10 +24,14 @@ const elements = {
 
 const state = {
   tabs: [],
+  tabGroups: [],
   selected: new Set(),
   query: "",
   view: "compact",
   collapsedWindows: new Set(),
+  collapsedTabGroups: new Set(),
+  manuallyToggledTabGroups: new Set(),
+  searchCollapsedTabGroups: new Set(),
   currentWindowId: null,
   shouldAutoLocate: true,
   toastTimer: null,
@@ -49,7 +53,9 @@ async function init() {
 
 function bindEvents() {
   elements.searchInput.addEventListener("input", (event) => {
+    const hadQuery = Boolean(state.query.trim());
     state.query = event.target.value;
+    if (!hadQuery || !state.query.trim()) state.searchCollapsedTabGroups.clear();
     render();
   });
 
@@ -95,13 +101,62 @@ function bindEvents() {
     if (changeInfo.title || changeInfo.url || changeInfo.status === "complete") refreshTabs();
   });
   chrome.tabs.onActivated.addListener(refreshTabs);
+
+  if (chrome.tabGroups) {
+    chrome.tabGroups.onCreated?.addListener(refreshTabs);
+    chrome.tabGroups.onUpdated?.addListener(refreshTabs);
+    chrome.tabGroups.onMoved?.addListener(refreshTabs);
+    chrome.tabGroups.onRemoved?.addListener(refreshTabs);
+  }
 }
 
 async function refreshTabs() {
-  state.tabs = await chrome.tabs.query({});
+  const [tabs, tabGroups] = await Promise.all([
+    chrome.tabs.query({}),
+    queryTabGroups()
+  ]);
+  state.tabs = tabs;
+  state.tabGroups = tabGroups;
+  syncTabGroupCollapseState(tabGroups);
+  if (state.shouldAutoLocate) {
+    const currentTab = state.tabs.find((tab) => tab.windowId === state.currentWindowId && tab.active);
+    if ((currentTab?.groupId ?? -1) >= 0) {
+      state.collapsedTabGroups.delete(currentTab.groupId);
+      state.manuallyToggledTabGroups.add(currentTab.groupId);
+    }
+  }
   const liveIds = new Set(state.tabs.map((tab) => tab.id));
   state.selected = new Set([...state.selected].filter((id) => liveIds.has(id)));
   render();
+}
+
+async function queryTabGroups() {
+  if (!chrome.tabGroups?.query) return [];
+  try {
+    return await chrome.tabGroups.query({});
+  } catch (error) {
+    console.warn("Could not read tab groups", error);
+    return [];
+  }
+}
+
+function syncTabGroupCollapseState(tabGroups) {
+  const liveGroupIds = new Set(tabGroups.map((group) => group.id));
+  for (const group of tabGroups) {
+    if (state.manuallyToggledTabGroups.has(group.id)) continue;
+    group.collapsed
+      ? state.collapsedTabGroups.add(group.id)
+      : state.collapsedTabGroups.delete(group.id);
+  }
+  for (const groupId of state.manuallyToggledTabGroups) {
+    if (!liveGroupIds.has(groupId)) state.manuallyToggledTabGroups.delete(groupId);
+  }
+  for (const groupId of state.collapsedTabGroups) {
+    if (!liveGroupIds.has(groupId)) state.collapsedTabGroups.delete(groupId);
+  }
+  for (const groupId of state.searchCollapsedTabGroups) {
+    if (!liveGroupIds.has(groupId)) state.searchCollapsedTabGroups.delete(groupId);
+  }
 }
 
 function getVisibleTabs() {
@@ -175,14 +230,14 @@ function render() {
       render();
     });
 
-    const grid = document.createElement("div");
-    grid.className = "tab-grid";
-    grid.hidden = isCollapsed;
+    const content = document.createElement("div");
+    content.className = "window-content";
+    content.hidden = isCollapsed;
     if (!isCollapsed) {
-      group.tabs.forEach((tab) => grid.append(createTabItem(tab)));
+      appendWindowTabSections(content, group.tabs);
     }
     section.classList.toggle("is-collapsed", isCollapsed);
-    section.append(heading, grid);
+    section.append(heading, content);
     elements.tabList.append(section);
   });
 
@@ -190,6 +245,119 @@ function render() {
     state.shouldAutoLocate = false;
     requestAnimationFrame(locateCurrentTab);
   }
+}
+
+function appendWindowTabSections(container, tabs) {
+  const groupsById = new Map(state.tabGroups.map((group) => [group.id, group]));
+  const sections = [];
+  const groupSections = new Map();
+  const orderedTabs = [...tabs].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+
+  for (const tab of orderedTabs) {
+    if ((tab.groupId ?? -1) >= 0) {
+      let section = groupSections.get(tab.groupId);
+      if (!section) {
+        section = { type: "group", groupId: tab.groupId, tabs: [] };
+        groupSections.set(tab.groupId, section);
+        sections.push(section);
+      }
+      section.tabs.push(tab);
+      continue;
+    }
+
+    let section = sections.at(-1);
+    if (!section || section.type !== "tabs") {
+      section = { type: "tabs", tabs: [] };
+      sections.push(section);
+    }
+    section.tabs.push(tab);
+  }
+
+  for (const section of sections) {
+    if (section.type === "tabs") {
+      const grid = document.createElement("div");
+      grid.className = "tab-grid";
+      section.tabs.forEach((tab) => grid.append(createTabItem(tab)));
+      container.append(grid);
+      continue;
+    }
+    container.append(createTabGroupSection(section, groupsById.get(section.groupId)));
+  }
+}
+
+function createTabGroupSection(sectionData, tabGroup) {
+  const { groupId, tabs } = sectionData;
+  const title = tabGroup?.title?.trim() || t("unnamedTabGroup");
+  const isSearching = Boolean(state.query.trim());
+  const collapsed = isSearching
+    ? state.searchCollapsedTabGroups.has(groupId)
+    : state.collapsedTabGroups.has(groupId);
+  const section = document.createElement("section");
+  section.className = "tab-group";
+  section.dataset.groupId = String(groupId);
+  if (tabGroup?.color) section.style.setProperty("--tab-group-color", getTabGroupColor(tabGroup.color));
+
+  const heading = document.createElement("button");
+  heading.className = "tab-group-heading";
+  heading.type = "button";
+  heading.setAttribute("aria-expanded", String(!collapsed));
+  heading.setAttribute("aria-controls", `tab-group-content-${groupId}`);
+  heading.setAttribute("aria-label", t(collapsed ? "expandTabGroup" : "collapseTabGroup", title));
+
+  const chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  chevron.classList.add("group-chevron");
+  chevron.setAttribute("viewBox", "0 0 24 24");
+  chevron.setAttribute("aria-hidden", "true");
+  const chevronPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  chevronPath.setAttribute("d", "m8 10 4 4 4-4");
+  chevron.append(chevronPath);
+
+  const colorDot = document.createElement("span");
+  colorDot.className = "tab-group-color";
+  colorDot.setAttribute("aria-hidden", "true");
+  const name = document.createElement("span");
+  name.className = "tab-group-name";
+  name.textContent = title;
+  name.title = title;
+  const count = document.createElement("span");
+  count.className = "tab-group-count";
+  count.textContent = String(tabs.length);
+  heading.append(chevron, colorDot, name, count);
+
+  heading.addEventListener("click", () => {
+    const collapsedGroups = state.query.trim()
+      ? state.searchCollapsedTabGroups
+      : state.collapsedTabGroups;
+    if (!state.query.trim()) state.manuallyToggledTabGroups.add(groupId);
+    collapsedGroups.has(groupId)
+      ? collapsedGroups.delete(groupId)
+      : collapsedGroups.add(groupId);
+    render();
+  });
+
+  const content = document.createElement("div");
+  content.className = "tab-group-content tab-grid";
+  content.id = `tab-group-content-${groupId}`;
+  content.hidden = collapsed;
+  if (!collapsed) tabs.forEach((tab) => content.append(createTabItem(tab)));
+  section.classList.toggle("is-collapsed", collapsed);
+  section.append(heading, content);
+  return section;
+}
+
+function getTabGroupColor(color) {
+  const colors = {
+    grey: "#87918c",
+    blue: "#4f7fe8",
+    red: "#dc5d57",
+    yellow: "#d6a125",
+    green: "#479363",
+    pink: "#d55491",
+    purple: "#9264c7",
+    cyan: "#35a6b0",
+    orange: "#d47a2e"
+  };
+  return colors[color] ?? colors.grey;
 }
 
 function createTabItem(tab) {
