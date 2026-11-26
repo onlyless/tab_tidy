@@ -176,8 +176,8 @@ button { color: inherit; }
 .window-group { border-radius: 12px; transition: background 120ms ease, outline-color 120ms ease; }
 .window-group.is-drop-target { outline: 2px dashed #67a88f; outline-offset: 6px; background: rgba(225, 241, 233, 0.7); }
 .window-group + .window-group { margin-top: 22px; }
-.window-content { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: start; gap: 10px; }
-.window-content > .tab-grid { grid-column: 1 / -1; }
+.window-content { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; }
+.window-content > .tab-grid { flex: 1 0 100%; }
 .window-content[hidden] { display: none; }
 .window-heading { display: flex; align-items: center; gap: 7px; width: 100%; margin: 0 0 9px; border: 0; padding: 3px 0; text-align: left; background: transparent; cursor: pointer; }
 .window-heading svg { width: 15px; height: 15px; fill: none; stroke: #7b8581; stroke-width: 2; transition: transform 140ms ease; }
@@ -190,10 +190,9 @@ button { color: inherit; }
 .tab-grid[hidden], .window-group.is-collapsed .tab-grid { display: none; }
 .detail-view .tab-grid { grid-template-columns: 1fr; }
 .compact-view .tab-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.tab-group { grid-column: span 3; min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255, 255, 255, 0.55); box-shadow: 0 2px 8px rgba(20, 42, 34, 0.025); }
-.tab-group.is-collapsed { grid-column: span 2; }
-.compact-view .tab-group-content { grid-template-columns: minmax(0, 1fr); }
-.detail-view .tab-group { grid-column: 1 / -1; }
+.tab-group { flex: 1 1 300px; min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255, 255, 255, 0.55); box-shadow: 0 2px 8px rgba(20, 42, 34, 0.025); }
+.compact-view .tab-group-content { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.detail-view .tab-group-content { grid-template-columns: 1fr; }
 .tab-group-heading { display: flex; align-items: center; gap: 7px; width: 100%; min-width: 0; min-height: 30px; margin: 0 0 7px; border: 0; border-radius: 8px; padding: 4px 7px; color: #48534e; text-align: left; background: transparent; cursor: pointer; transition: background 120ms ease, color 120ms ease; }
 .tab-group-heading:hover { color: var(--ink); background: rgba(255, 255, 255, 0.72); }
 .tab-group-heading .group-chevron { flex: 0 0 auto; width: 14px; height: 14px; fill: none; stroke: #7b8581; stroke-width: 2; transition: transform 140ms ease; }
